@@ -11,9 +11,10 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20180514091955_JpournalRegistry")]
+    partial class JpournalRegistry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,7 +38,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Journals");
+                    b.ToTable("Jurnals");
                 });
 
             modelBuilder.Entity("Data.Note", b =>
@@ -82,8 +83,6 @@ namespace Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired();
-
-                    b.Property<string>("Status");
 
                     b.HasKey("Id");
 

@@ -9,6 +9,7 @@ namespace Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<Journal> Journals { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         { }

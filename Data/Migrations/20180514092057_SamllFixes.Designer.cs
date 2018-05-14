@@ -11,9 +11,10 @@ using System;
 namespace Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20180514092057_SamllFixes")]
+    partial class SamllFixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,8 +83,6 @@ namespace Data.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired();
-
-                    b.Property<string>("Status");
 
                     b.HasKey("Id");
 

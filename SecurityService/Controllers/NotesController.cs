@@ -7,6 +7,7 @@ using Data;
 using SecurityService.Security;
 using System.IdentityModel.Tokens.Jwt;
 using SecurityService.Model;
+using SecurityService.Helpers;
 
 namespace SecurityService.Controllers
 {
@@ -30,8 +31,12 @@ namespace SecurityService.Controllers
             int user = GetUser(token);
             if(user == -1)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get notes", false, "Unauthorized"));
+                _context.SaveChanges();
                 return new NotFoundObjectResult("Unauthorized!");
             }
+            _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get notes", true, user.ToString()));
+            _context.SaveChanges();
             return new OkObjectResult(_context.Notes.Where(note => note.UserId == user));
         }
 
@@ -42,11 +47,16 @@ namespace SecurityService.Controllers
             int user = GetUser(token);
             if (user == -1)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get note", false, "Unauthorized"));
+                await _context.SaveChangesAsync();
                 return Unauthorized();
             }
 
             if (!ModelState.IsValid)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return BadRequest(ModelState);
             }
 
@@ -54,8 +64,14 @@ namespace SecurityService.Controllers
 
             if (note == null)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return NotFound();
             }
+
+            _context.Journals.Add(JournalEntryBuilder.CreateEntry("Get note", true, user.ToString()));
+            await _context.SaveChangesAsync();
 
             return Ok(note);
         }
@@ -67,11 +83,17 @@ namespace SecurityService.Controllers
             int user = GetUser(token);
             if (user == -1)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Put note", false, "Unauthorized"));
+                await _context.SaveChangesAsync();
+
                 return Unauthorized();
             }
 
             if (!ModelState.IsValid)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Put note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return BadRequest(ModelState);
             }
 
@@ -90,6 +112,7 @@ namespace SecurityService.Controllers
             {
                 if (!NoteExists(dbNote.Id, user))
                 {
+                    _context.Journals.Add(JournalEntryBuilder.CreateEntry("Put note", false, user.ToString()));
                     return NotFound();
                 }
                 else
@@ -97,6 +120,8 @@ namespace SecurityService.Controllers
                     throw;
                 }
             }
+            _context.Journals.Add(JournalEntryBuilder.CreateEntry("Put note", true, user.ToString()));
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
@@ -108,11 +133,17 @@ namespace SecurityService.Controllers
             int user = GetUser(token);
             if (user == -1)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Post note", false, "Unauthorized"));
+                await _context.SaveChangesAsync();
+
                 return Unauthorized();
             }
 
             if (!ModelState.IsValid)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Post note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return BadRequest(ModelState);
             }
 
@@ -125,8 +156,9 @@ namespace SecurityService.Controllers
 
 
             _context.Notes.Add(dbNote);
-            await _context.SaveChangesAsync();
+            _context.Journals.Add(JournalEntryBuilder.CreateEntry("Post note", true, user.ToString()));
 
+            await _context.SaveChangesAsync();
             return Ok(dbNote);
         }
 
@@ -137,23 +169,33 @@ namespace SecurityService.Controllers
             int user = GetUser(token);
             if (user == -1)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Delete note", false, "Unauthorized"));
+                await _context.SaveChangesAsync();
+
                 return Unauthorized();
             }
 
             if (!ModelState.IsValid)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Delete note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return BadRequest(ModelState);
             }
 
             var note = await _context.Notes.SingleOrDefaultAsync(m => m.Id == id && m.UserId == user);
             if (note == null)
             {
+                _context.Journals.Add(JournalEntryBuilder.CreateEntry("Delete note", false, user.ToString()));
+                await _context.SaveChangesAsync();
+
                 return NotFound();
             }
 
             _context.Notes.Remove(note);
-            await _context.SaveChangesAsync();
+            _context.Journals.Add(JournalEntryBuilder.CreateEntry("Delete note", true, user.ToString()));
 
+            await _context.SaveChangesAsync();
             return Ok(note);
         }
 

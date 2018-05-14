@@ -15,6 +15,8 @@ namespace Data
 
         public string Name { get; set; }
 
+        public string Status { get; set; }
+
         [Required, Phone]
         public string PhoneNumber { get; set; }
 
